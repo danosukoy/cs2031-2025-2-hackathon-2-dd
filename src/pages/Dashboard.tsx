@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../services/api';
 import { Card } from '../components/common/Card';
-import type { Task, Project } from '../types';
+import type { Task } from '../types';
 import { Link } from 'react-router-dom';
 
 export const Dashboard = () => {
@@ -17,8 +17,6 @@ export const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Traemos proyectos y tareas en paralelo para velocidad
-        // Nota: hackathon shortcut -> pedimos limit alto para calcular stats locales
         const [projectsRes, tasksRes] = await Promise.all([
           api.get('/projects?limit=100'),
           api.get('/tasks?limit=100') 
@@ -28,7 +26,6 @@ export const Dashboard = () => {
         const projects = projectsRes.data.projects || [];
         const now = new Date();
 
-        // Cálculos de estadísticas
         const pending = tasks.filter((t: Task) => t.status === 'TODO' || t.status === 'IN_PROGRESS').length;
         const completed = tasks.filter((t: Task) => t.status === 'COMPLETED').length;
         const overdue = tasks.filter((t: Task) => {
@@ -42,7 +39,6 @@ export const Dashboard = () => {
           overdueTasks: overdue
         });
 
-        // Tomamos las primeras 5 tareas para "Actividad Reciente"
         setRecentTasks(tasks.slice(0, 5));
       } catch (error) {
         console.error("Error cargando dashboard", error);
@@ -58,7 +54,6 @@ export const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard title="Proyectos Activos" value={stats.totalProjects} color="bg-blue-500" />
         <StatCard title="Tareas Pendientes" value={stats.pendingTasks} color="bg-yellow-500" />
@@ -67,7 +62,6 @@ export const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Activity */}
         <div className="lg:col-span-2">
           <Card className="h-full">
             <h3 className="text-lg font-bold mb-4 text-gray-700">Tareas Recientes</h3>
@@ -98,7 +92,6 @@ export const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Quick Actions */}
         <div className="lg:col-span-1">
           <Card className="h-full">
             <h3 className="text-lg font-bold mb-4 text-gray-700">Acciones Rápidas</h3>
@@ -111,10 +104,9 @@ export const Dashboard = () => {
               </Link>
               <div className="border-t pt-4 mt-2">
                 <p className="text-sm text-gray-500 mb-2">Equipo</p>
-                <div className="flex -space-x-2 overflow-hidden">
-                  {/* Placeholder avatars */}
-                  <div className="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-gray-300 flex items-center justify-center text-xs">JP</div>
-                  <div className="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-gray-400 flex items-center justify-center text-xs">AM</div>
+                <div className="flex -space-x-2 overflow-hidden pl-2">
+                  <div className="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-gray-300 flex items-center justify-center text-xs text-gray-600 font-bold">JP</div>
+                  <div className="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-gray-400 flex items-center justify-center text-xs text-white font-bold">AM</div>
                 </div>
               </div>
             </div>
@@ -125,7 +117,6 @@ export const Dashboard = () => {
   );
 };
 
-// Subcomponente simple para las tarjetas de stats
 const StatCard = ({ title, value, color }: { title: string, value: number, color: string }) => (
   <Card className="flex items-center justify-between border-l-4 border-transparent overflow-hidden relative">
     <div className={`absolute left-0 top-0 bottom-0 w-2 ${color}`}></div>
