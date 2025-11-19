@@ -8,13 +8,10 @@ import { Dashboard } from './pages/Dashboard';
 import { Projects } from './pages/Projects';
 import { Tasks } from './pages/Tasks';
 
-// Importación del Layout
+
 import { DashboardLayout } from './components/layout/DashboardLayout';
 
-// Componente para proteger rutas
-// Si está cargando, muestra un texto simple.
-// Si no está autenticado, redirige al login.
-// Si está autenticado, muestra el contenido (children o Outlet).
+
 const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = useAuth();
 
